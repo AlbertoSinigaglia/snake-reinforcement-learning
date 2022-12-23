@@ -1,7 +1,5 @@
-import sys, os
 import tensorflow as tf
 import numpy as np
-
 
 
 def process_boards(boards):
@@ -74,4 +72,3 @@ def process_boards(boards):
                 j = np.random.randint(0, env["board_size"])
             board[i, j] = env["FRUIT"]
     return rewards
-#%%
