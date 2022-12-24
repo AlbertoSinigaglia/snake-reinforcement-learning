@@ -3,6 +3,23 @@ import matplotlib.pyplot as plt
 from environments import *
 import multiprocessing as mp
 
+def reinitialize(model):
+    for l in model.layers:
+        if hasattr(l,"kernel_initializer"):
+            try:
+                l.kernel.assign(l.kernel_initializer(tf.shape(l.kernel)))
+            except:
+                pass
+        if hasattr(l,"bias_initializer"):
+            try:
+                l.bias.assign(l.bias_initializer(tf.shape(l.bias)))
+            except:
+                pass
+        if hasattr(l,"recurrent_initializer"):
+            try:
+                l.recurrent_kernel.assign(l.recurrent_initializer(tf.shape(l.recurrent_kernel)))
+            except:
+                pass
 
 def re_normalize_possible_actions(state, probs, mask_with=0.):
     state = tf.argmax(state, axis=-1)
