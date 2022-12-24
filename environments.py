@@ -431,13 +431,13 @@ class NumpyEnvironment(BaseEnvironment):
         offset = np.hstack((np.zeros_like(actions), dx[:, None], dy[:, None]))
         new_heads = (heads + offset).astype(int)
 
-        if np.any(new_heads[:, 1:] == 4):
-            index = np.argwhere(np.any(new_heads[:, 1:] == 4, axis=-1))[0][0]
-            print(index)
-            print(self.boards[index])
-            print(self.bodies[index])
-            print(actions[index])
-            raise Exception("smth wrong")
+        # if np.any(new_heads[:, 1:] == 4):
+        #     index = np.argwhere(np.any(new_heads[:, 1:] == 4, axis=-1))[0][0]
+        #     print(index)
+        #     print(self.boards[index])
+        #     print(self.bodies[index])
+        #     print(actions[index])
+        #     raise Exception("smth wrong")
 
         # fruits per board
         fruits = np.argwhere(self.boards == self.FRUIT)
