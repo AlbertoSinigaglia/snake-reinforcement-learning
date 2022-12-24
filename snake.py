@@ -4,9 +4,10 @@ from environments import *
 import multiprocessing as mp
 
 
-def re_normalize_possible_actions(state, probs, mask_with=np.finfo(np.float32).min):
+def re_normalize_possible_actions(state, probs, mask_with=0.):
     state = tf.argmax(state, axis=-1)
     board_size = state.shape[-1]
+
     indexes = tf.where(state == 2)
     mask = np.ones_like(probs)
 
@@ -26,7 +27,8 @@ def re_normalize_possible_actions(state, probs, mask_with=np.finfo(np.float32).m
     bottom_border = tf.where(indexes[:, 1] == 0)
     bottom_border = tf.concat((bottom_border, tf.ones_like(bottom_border) * 2), axis=-1)
     mask = tf.tensor_scatter_nd_update(mask, bottom_border, mask_with * tf.ones(bottom_border.shape[0]))
-    return tf.nn.softmax(probs * tf.stop_gradient(mask))
+
+    return tf.linalg.normalize(probs * mask, ord=1, axis=-1)[0]
 
 
 if __name__ == '__main__':
