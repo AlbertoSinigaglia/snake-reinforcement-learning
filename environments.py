@@ -94,10 +94,10 @@ class BaseEnvironment:
         self.DOWN = 2
         self.LEFT = 3
 
-        self.WIN_REWARD = 10000
-        self.FRUIT_REWARD = 10
-        self.STEP_REWARD = 0
-        self.ATE_HIMSELF_REWARD = 10  # scalar to multiply to -len(eaten body)
+        self.WIN_REWARD = 20.
+        self.FRUIT_REWARD = 10.
+        self.STEP_REWARD = 0.
+        self.ATE_HIMSELF_REWARD = 10.  # scalar to multiply to -len(eaten body)
 
         self.HEAD = 3
         self.BODY = 2
@@ -108,11 +108,11 @@ class BaseEnvironment:
         self.n_boards = n_boards
         self.boards = np.zeros((self.n_boards, self.board_size, self.board_size))
         for board in self.boards:
-            i = np.random.randint(0, self.board_size);
+            i = np.random.randint(0, self.board_size)
             j = np.random.randint(0, self.board_size)
             board[i, j] = self.HEAD
             while board[i, j] != 0:
-                i = np.random.randint(0, self.board_size);
+                i = np.random.randint(0, self.board_size)
                 j = np.random.randint(0, self.board_size)
             board[i, j] = self.FRUIT
         self.bodies = [[] for _ in range(self.n_boards)]
@@ -209,7 +209,7 @@ class ProcessEnvironment(BaseEnvironment):
             board_count, (board, action, body) = elems
             if tf.reduce_sum(board) - 5 == (self.board_size ** 2 - 3) * self.BODY:
                 print("won")
-                rewards[board_count] = self.WIN_REWARD
+                rewards[int(board_count)] = self.WIN_REWARD
                 board = np.zeros(self.board_size, self.board_size)
                 i = np.random.randint(0, self.board_size);
                 j = np.random.randint(0, self.board_size)
@@ -479,7 +479,6 @@ class NumpyEnvironment(BaseEnvironment):
         for b in boards_where_fruits_is_been_eaten:
             available = np.argwhere(self.boards[b] == self.EMPTY)
             if len(available) == 0:
-                print("won")
                 self.boards[b] = np.zeros((self.board_size, self.board_size))
                 self.bodies[b] = []
                 rewards[b] = self.WIN_REWARD
