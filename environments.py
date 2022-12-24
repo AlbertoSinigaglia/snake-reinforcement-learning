@@ -469,19 +469,26 @@ class NumpyEnvironment(BaseEnvironment):
             heads[boards_where_fruits_is_been_eaten][:, 2]] = self.BODY
         self.boards[new_heads[:, 0], new_heads[:, 1], new_heads[:, 2]] = self.HEAD
 
-        #
-        # Missing code to check if someone wins
-        #
-
-        # check add fruit to boards where it's been eaten
-        for b in boards_where_fruits_is_been_eaten:
-            ind = np.argwhere(self.boards[b] == self.EMPTY)[0]
-            self.boards[b][ind[0], ind[1]] = self.FRUIT
-
         rewards[boards_where_fruits_is_been_eaten] += self.FRUIT_REWARD
         rewards[np.setdiff1d(
             np.arange(0, self.n_boards),
             np.union1d(boards_where_fruits_is_been_eaten, boards_where_bodies_is_been_eaten))
         ] += self.STEP_REWARD
+
+        # check add fruit to boards where it's been eaten
+        for b in boards_where_fruits_is_been_eaten:
+            available = np.argwhere(self.boards[b] == self.EMPTY)
+            if len(available) == 0:
+                print("won")
+                self.boards[b] = np.zeros((self.board_size, self.board_size))
+                self.bodies[b] = []
+                rewards[b] = self.WIN_REWARD
+                i = np.random.randint(0, self.board_size)
+                j = np.random.randint(0, self.board_size)
+                self.boards[b][i, j] = self.HEAD
+
+            available = np.argwhere(self.boards[b] == self.EMPTY)
+            ind = available[np.random.choice(range(len(available)))]
+            self.boards[b][ind[0], ind[1]] = self.FRUIT
 
         return tf.reshape(tf.convert_to_tensor(rewards, dtype=tf.float32), (-1, 1))

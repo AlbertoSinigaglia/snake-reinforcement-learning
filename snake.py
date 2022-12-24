@@ -160,7 +160,9 @@ if __name__ == '__main__':
         #     print("Resetting env")
         #     env_ = ProcessEnvironment(1, BOARD_SIZE)
 
-    random_env_ = ThreadEnvironment(100, BOARD_SIZE)
+
+
+    random_env_ = NumpyEnvironment(100, BOARD_SIZE)
     random_rewards = []
 
     for _ in trange(100):
