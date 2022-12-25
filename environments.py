@@ -460,7 +460,7 @@ class NumpyEnvironment(BaseEnvironment):
                 self.boards[b, to_delete_np[:, 0], to_delete_np[:, 1]] = self.EMPTY
                 del self.bodies[b][index:]
 
-                rewards[b] = -(1 + index) * self.ATE_HIMSELF_REWARD
+                rewards[b] = -(1 + len(to_delete)) * self.ATE_HIMSELF_REWARD
 
         # remove last peace of each body (if fruit not been eaten) and add the head
         for i in range(self.n_boards):
