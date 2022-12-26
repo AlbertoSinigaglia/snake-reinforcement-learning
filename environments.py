@@ -431,14 +431,6 @@ class NumpyEnvironment(BaseEnvironment):
         offset = np.hstack((np.zeros_like(actions), dx[:, None], dy[:, None]))
         new_heads = (heads + offset).astype(int)
 
-        # if np.any(new_heads[:, 1:] == 4):
-        #     index = np.argwhere(np.any(new_heads[:, 1:] == 4, axis=-1))[0][0]
-        #     print(index)
-        #     print(self.boards[index])
-        #     print(self.bodies[index])
-        #     print(actions[index])
-        #     raise Exception("smth wrong")
-
         # fruits per board
         fruits = np.argwhere(self.boards == self.FRUIT)
         fruits_eaten_bool = np.all(fruits == new_heads, axis=-1)
@@ -459,8 +451,7 @@ class NumpyEnvironment(BaseEnvironment):
                 to_delete_np = np.array(to_delete)
                 self.boards[b, to_delete_np[:, 0], to_delete_np[:, 1]] = self.EMPTY
                 del self.bodies[b][index:]
-
-                rewards[b] = -(1 + len(to_delete)) * self.ATE_HIMSELF_REWARD
+                rewards[b] = -len(to_delete) * self.ATE_HIMSELF_REWARD
 
         # remove last peace of each body (if fruit not been eaten) and add the head
         for i in range(self.n_boards):
