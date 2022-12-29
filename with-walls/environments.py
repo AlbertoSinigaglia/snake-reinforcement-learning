@@ -113,6 +113,7 @@ class NumpyEnvironment(BaseEnvironment):
             heads[boards_where_fruits_is_been_eaten][:, 0],
             heads[boards_where_fruits_is_been_eaten][:, 1],
             heads[boards_where_fruits_is_been_eaten][:, 2]] = self.BODY
+
         self.boards[new_heads[:, 0], new_heads[:, 1], new_heads[:, 2]] = self.HEAD
 
         rewards[boards_where_fruits_is_been_eaten] += self.FRUIT_REWARD
