@@ -101,7 +101,7 @@ class BaseEnvironment:
         return tf.reshape(tf.convert_to_tensor(rewards, dtype=tf.float32), (-1, 1))
 
     def to_state(self):
-        return K.utils.to_categorical(self.boards)
+        return K.utils.to_categorical(self.boards)[..., 1:]
 
 
 class Walls25x25SnakeEnvironment(BaseEnvironment):
@@ -141,8 +141,8 @@ class Walls25x25SnakeEnvironment(BaseEnvironment):
 
 class Walls17x17SnakeEnvironment(BaseEnvironment):
     BOARD_SIZE = 17
-    def __init__(self, n_boards, board_size):
-        super().__init__(n_boards, board_size)
+    def __init__(self, n_boards):
+        super().__init__(n_boards, self.BOARD_SIZE)
         self.WIN_REWARD = 2.
         self.FRUIT_REWARD = 1.
         self.STEP_REWARD = 0.
