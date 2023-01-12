@@ -174,6 +174,41 @@ class Walls17x17SnakeEnvironment(BaseEnvironment):
             ind = available[np.random.choice(range(len(available)))]
             board[ind[0], ind[1]] = self.FRUIT
 
+class Walls9x9SnakeEnvironment(BaseEnvironment):
+    BOARD_SIZE = 9
+    def __init__(self, n_boards):
+        super().__init__(n_boards, self.BOARD_SIZE)
+        self.WIN_REWARD = 2.
+        self.FRUIT_REWARD = 1.
+        self.STEP_REWARD = 0.
+        # scalar to multiply to -len(eaten body)
+        self.ATE_HIMSELF_REWARD = .5
+
+        self.board_size = self.BOARD_SIZE
+        self.n_boards = n_boards
+        self.boards = np.ones((self.n_boards, self.board_size, self.board_size)) * self.EMPTY
+        self.boards[:, [0, 4, 8], :] = self.WALL
+        self.boards[:, :, [0, 4, 8]] = self.WALL
+        available_walls = np.array([
+            # vertical walls between rooms
+            [[4, 1], [4, 2], [4, 3]],
+            [[4, 5], [4, 6], [4, 7]],
+            # horizontal walls between rooms
+            [[1, 4], [2, 4], [3, 4]],
+            [[5, 4], [6, 4], [7, 4]],
+        ])
+        for board in self.boards:
+            indexes = available_walls[
+                np.arange(available_walls.shape[0]), np.random.randint(0, available_walls.shape[1], 4)]
+            board[indexes[:, 0], indexes[:, 1]] = self.EMPTY
+
+            available = np.argwhere(board == self.EMPTY)
+            ind = available[np.random.choice(range(len(available)))]
+            board[ind[0], ind[1]] = self.HEAD
+            available = np.argwhere(board == self.EMPTY)
+            ind = available[np.random.choice(range(len(available)))]
+            board[ind[0], ind[1]] = self.FRUIT
+
 
 class OriginalSnakeEnvironment(BaseEnvironment):
     def __init__(self, n_boards, board_size):

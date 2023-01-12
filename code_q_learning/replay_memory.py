@@ -26,6 +26,9 @@ class ReplayMemoryFast:
         samples = []
         for i in samples_index:
             iter = self.experience[int(i)]
-            indexes = np.random.choice(np.arange(len(iter[0])), self.subsample_size, replace=False).astype(int)
+            if len(iter[0]) == self.subsample_size:
+                indexes = np.arange(len(iter[0]))
+            else:
+                indexes = np.random.choice(np.arange(len(iter[0])), self.subsample_size, replace=False).astype(int)
             samples.append([el[indexes] for el in iter])
         return samples
