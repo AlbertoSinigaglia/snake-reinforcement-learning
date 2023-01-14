@@ -19,7 +19,7 @@ class BaseEnvironment:
         self.WIN_REWARD = 1.
         self.FRUIT_REWARD = .5
         self.STEP_REWARD = 0.
-        self.ATE_HIMSELF_REWARD = .2  # scalar to multiply to -len(eaten body)
+        self.ATE_HIMSELF_REWARD = -.2
 
         self.board_size = board_size
         self.n_boards = n_boards
@@ -59,15 +59,18 @@ class BaseEnvironment:
                 to_delete_np = np.array(to_delete)
                 self.boards[b, to_delete_np[:, 0], to_delete_np[:, 1]] = self.EMPTY
                 del self.bodies[b][index:]
-                rewards[b] = -len(to_delete) * self.ATE_HIMSELF_REWARD
+                rewards[b] = self.ATE_HIMSELF_REWARD
 
         # remove last peace of each body (if fruit not been eaten) and add the head
         for i in range(self.n_boards):
             self.bodies[i].insert(0, heads[i][1:])
-            self.boards[heads[i][0], heads[i][1], heads[i][2]] = self.BODY
+            self.boards[i][np.where(self.boards[i] == self.BODY)] = self.EMPTY
+            self.boards[i][heads[i, 1], heads[i, 2]] = self.EMPTY
             if i not in boards_where_fruits_is_been_eaten.reshape((-1,)).tolist():
-                self.boards[heads[i][0], self.bodies[i][-1][0], self.bodies[i][-1][1]] = self.EMPTY
                 self.bodies[i].pop()
+            if self.bodies[i]:
+                body = np.array(self.bodies[i])
+                self.boards[i][body[:, 0], body[:, 1]] = self.BODY
 
         boards_where_fruits_is_been_eaten = boards_where_fruits_is_been_eaten.reshape((-1,))
         self.boards[
@@ -106,6 +109,7 @@ class BaseEnvironment:
 
 class Walls25x25SnakeEnvironment(BaseEnvironment):
     BOARD_SIZE = 25
+
     def __init__(self, n_boards):
         super().__init__(n_boards, self.BOARD_SIZE)
         self.boards[:, [0, 8, 16, 24], :] = self.WALL
@@ -141,6 +145,7 @@ class Walls25x25SnakeEnvironment(BaseEnvironment):
 
 class Walls17x17SnakeEnvironment(BaseEnvironment):
     BOARD_SIZE = 17
+
     def __init__(self, n_boards):
         super().__init__(n_boards, self.BOARD_SIZE)
         self.WIN_REWARD = 2.
@@ -174,8 +179,10 @@ class Walls17x17SnakeEnvironment(BaseEnvironment):
             ind = available[np.random.choice(range(len(available)))]
             board[ind[0], ind[1]] = self.FRUIT
 
+
 class Walls9x9SnakeEnvironment(BaseEnvironment):
     BOARD_SIZE = 9
+
     def __init__(self, n_boards):
         super().__init__(n_boards, self.BOARD_SIZE)
         self.WIN_REWARD = 2.
@@ -239,18 +246,18 @@ def get_probabilities_mask(boards, shape, mask_with=0.):
     heads_right[:, 2] += 1
     heads_left[:, 2] -= 1
 
-    powers = np.max(walls)**np.arange(walls.shape[1])
+    powers = np.max(walls) ** np.arange(walls.shape[1])
 
-    walls_code = np.sum(walls*powers, axis=-1)
-    heads_up_code = np.sum(heads_up*powers, axis=-1)
-    heads_down_code = np.sum(heads_down*powers, axis=-1)
-    heads_left_code = np.sum(heads_left*powers, axis=-1)
-    heads_right_code = np.sum(heads_right*powers, axis=-1)
+    walls_code = np.sum(walls * powers, axis=-1)
+    heads_up_code = np.sum(heads_up * powers, axis=-1)
+    heads_down_code = np.sum(heads_down * powers, axis=-1)
+    heads_left_code = np.sum(heads_left * powers, axis=-1)
+    heads_right_code = np.sum(heads_right * powers, axis=-1)
 
-    idx_up = heads_up[np.isin(heads_up_code, walls_code)][:,0]
-    idx_down = heads_up[np.isin(heads_down_code, walls_code)][:,0]
-    idx_right = heads_up[np.isin(heads_right_code, walls_code)][:,0]
-    idx_left = heads_up[np.isin(heads_left_code, walls_code)][:,0]
+    idx_up = heads_up[np.isin(heads_up_code, walls_code)][:, 0]
+    idx_down = heads_up[np.isin(heads_down_code, walls_code)][:, 0]
+    idx_right = heads_up[np.isin(heads_right_code, walls_code)][:, 0]
+    idx_left = heads_up[np.isin(heads_left_code, walls_code)][:, 0]
 
     if np.size(idx_up): mask[idx_up, BaseEnvironment.UP] = mask_with
     if np.size(idx_down): mask[idx_down, BaseEnvironment.DOWN] = mask_with

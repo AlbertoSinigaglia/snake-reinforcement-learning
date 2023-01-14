@@ -8,16 +8,6 @@ def load_models(env_, folder_name=None):
     x = K.layers.BatchNormalization()(x)
     x = K.layers.Activation(tf.nn.leaky_relu)(x)
 
-    if env_.board_size > 8:
-        x = K.layers.MaxPool2D(2, padding="same")(x)
-        x = K.layers.Conv2D(64, (3, 3), activation=tf.nn.leaky_relu, padding="SAME")(x)
-        x = K.layers.BatchNormalization()(x)
-        x = K.layers.Activation(tf.nn.leaky_relu)(x)
-    if env_.board_size > 12:
-        x = K.layers.MaxPool2D(2, padding="same")(x)
-        x = K.layers.Conv2D(64, (3, 3), activation=tf.nn.leaky_relu, padding="SAME")(x)
-        x = K.layers.BatchNormalization()(x)
-        x = K.layers.Activation(tf.nn.leaky_relu)(x)
     if env_.board_size > 16:
         x = K.layers.MaxPool2D(2, padding="same")(x)
         x = K.layers.Conv2D(64, (3, 3), activation=tf.nn.leaky_relu, padding="SAME")(x)
@@ -46,16 +36,6 @@ def load_models(env_, folder_name=None):
     x = K.layers.BatchNormalization()(x)
     x = K.layers.Activation(tf.nn.leaky_relu)(x)
 
-    if env_.board_size > 8:
-        x = K.layers.MaxPool2D(2, padding="same")(x)
-        x = K.layers.Conv2D(64, (3, 3), activation=tf.nn.leaky_relu, padding="SAME")(x)
-        x = K.layers.BatchNormalization()(x)
-        x = K.layers.Activation(tf.nn.leaky_relu)(x)
-    if env_.board_size > 12:
-        x = K.layers.MaxPool2D(2, padding="same")(x)
-        x = K.layers.Conv2D(64, (3, 3), activation=tf.nn.leaky_relu, padding="SAME")(x)
-        x = K.layers.BatchNormalization()(x)
-        x = K.layers.Activation(tf.nn.leaky_relu)(x)
     if env_.board_size > 16:
         x = K.layers.MaxPool2D(2, padding="same")(x)
         x = K.layers.Conv2D(64, (3, 3), activation=tf.nn.leaky_relu, padding="SAME")(x)
