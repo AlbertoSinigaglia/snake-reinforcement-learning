@@ -31,7 +31,7 @@ def load_models(env_, folder_name=None):
 
     if folder_name is not None:
         try:
-            qfunction.load_weights(folder_name + f"/qfunction")
+            qfunction.load_weights(folder_name + f"/agent")
             print("loaded")
         except:
             pass
