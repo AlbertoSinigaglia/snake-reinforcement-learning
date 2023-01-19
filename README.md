@@ -6,9 +6,15 @@ Everything is implemented from scratch using Tensorflow.
 
 ## Training
 Full training using DDQN
-[training](training.mp4)
+
+<video controls>
+  <source src="./training.mp4" type="video/mp4">
+</video>
 
 
 ## Evaluation
 Evaluation of the model trained using DDQN
-[evaluation](evaluation.mp4)
+
+<video controls>
+  <source src="./evaluation.mp4" type="video/mp4">
+</video>
