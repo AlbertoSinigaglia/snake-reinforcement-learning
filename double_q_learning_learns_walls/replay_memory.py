@@ -2,6 +2,11 @@ import numpy as np
 
 
 class ReplayMemoryFast:
+    """
+    memory_size: number of transitions to store
+    minibatch_size: number of transition to sample
+    subsample_size: number of elements to samples from sampled transitions
+    """
     def __init__(self, memory_size, minibatch_size, subsample_size):
         self.subsample_size = subsample_size
         self.memory_size = memory_size
@@ -10,6 +15,7 @@ class ReplayMemoryFast:
         self.current_index = 0
         self.size = 0
 
+    # store new transition (set of SARS from multiple simulators)
     def store(self, observation, action, reward, newobservation):
         self.experience[self.current_index] = (np.copy(observation), np.copy(action), np.copy(reward), np.copy(newobservation))
         self.current_index += 1
@@ -18,6 +24,7 @@ class ReplayMemoryFast:
         if self.current_index >= self.memory_size:
             self.current_index -= self.memory_size
 
+    # get a sample from the memory
     def sample(self):
         if self.size < self.minibatch_size:
             samples_index = np.arange(self.size)
