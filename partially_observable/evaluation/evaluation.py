@@ -80,5 +80,6 @@ b[(h[0] - test_env_2.mask_size):(h[0] + test_env_2.mask_size + 1),
 b = b[test_env_2.mask_size:-test_env_2.mask_size, test_env_2.mask_size:-test_env_2.mask_size]
 images.append(axs[2].imshow(b, origin="lower"))
 
-anim = FuncAnimation(fig, animate, frames=10, interval=90)
+anim = FuncAnimation(fig, animate, frames=1000, interval=90)
 plt.show()
+#anim.save('comparison.mp4', writer="ffmpeg")
