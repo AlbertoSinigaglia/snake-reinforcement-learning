@@ -18,3 +18,8 @@ Evaluation of the model trained using DDQN
 
 https://user-images.githubusercontent.com/25763924/213567968-ea245697-2e7a-495b-b302-c73dc53d91c8.mp4
 
+## Comparison
+Comparison of A2C on fully observable, and partially observable (5x5 window and 3x3 window)
+
+https://user-images.githubusercontent.com/25763924/220478593-06081b09-35fc-4a2e-b8d1-a9031a4766fc.mp4
+
