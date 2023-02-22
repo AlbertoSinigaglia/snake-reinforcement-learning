@@ -116,8 +116,8 @@ class BaseEnvironment:
         rewards[boards_where_fruits_is_been_eaten] = self.FRUIT_REWARD
         rewards[np.setdiff1d(
             np.arange(0, self.n_boards),
-            np.union1d(boards_where_fruits_is_been_eaten, boards_where_bodies_is_been_eaten))
-        ] = self.STEP_REWARD
+            np.union1d(np.union1d(boards_where_fruits_is_been_eaten, boards_where_bodies_is_been_eaten), hit_wall)
+        )] = self.STEP_REWARD
 
         # (check) add fruit to boards where it's been eaten
         for b in boards_where_fruits_is_been_eaten:

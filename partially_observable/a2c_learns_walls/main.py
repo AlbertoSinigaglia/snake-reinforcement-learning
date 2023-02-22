@@ -14,13 +14,14 @@ LOAD_FROM_MEMORY = True
 VISUAL = False
 
 
-
 def get_env(n=1000):
-    e = OriginalSnakeEnvironment(n, 10, 1)
+    e = Walls9x9SnakeEnvironment(n, 2)
     return e
+
+
 env_ = get_env()
 GAMMA = .9
-ITERATIONS = 12500
+ITERATIONS = 12500 * 4
 EPSILON = 0.03
 LAMBDA_VALUE = 0.1
 LAMBDA_AGENT = 0.1
