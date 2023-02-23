@@ -10,29 +10,31 @@ import random
 random.seed(0)
 np.random.seed(0)
 tf.random.set_seed(0)
-LOAD_FROM_MEMORY = True
+LOAD_FROM_MEMORY = False
 VISUAL = False
 
 
 def get_env(n=1000):
     e = Walls9x9SnakeEnvironment(n, 2)
+    e.FRUIT_REWARD = 5.
     return e
 
 
 env_ = get_env()
-GAMMA = .9
-ITERATIONS = 12500 * 4
-EPSILON = 0.03
-LAMBDA_VALUE = 0.1
-LAMBDA_AGENT = 0.1
+GAMMA = .99
+ITERATIONS = 12500 * 2
+EPSILON = 0.1
+LAMBDA_VALUE = 0.
+LAMBDA_AGENT = 0.
 #  ALPHA = 0.1
 MODELS_PREFIX = f"models/{type(env_).__name__}/{env_.board_size}x{env_.board_size}-{env_.mask_size}"
 os.makedirs(MODELS_PREFIX, exist_ok=True)
 
 agent, value, avg_rewards = load_models(env_, folder_name=MODELS_PREFIX if LOAD_FROM_MEMORY else None)
+
 avg_td_error = []
 optimizer_value = tf.keras.optimizers.legacy.Adam(1e-4)
-optimizer_agent = tf.keras.optimizers.legacy.Adam(1e-5)
+optimizer_agent = tf.keras.optimizers.legacy.Adam(2e-5)
 eligibility_trace_agent = [tf.zeros_like(layer) for layer in agent.trainable_weights]
 eligibility_trace_value = [tf.zeros_like(layer) for layer in value.trainable_weights]
 
@@ -40,6 +42,13 @@ if VISUAL:
     plt.ion()
     fig, axs = plt.subplots(1,2, figsize=(10,3))
     fig_anim, ax_anim = plt.subplots(1,1, figsize=(5,5))
+    b = np.copy(env_.boards[0]).astype(float)
+    b = np.pad(b, env_.mask_size)
+    h = np.argwhere(b == env_.HEAD)[0]
+    b[(h[0]-env_.mask_size):(h[0]+env_.mask_size+1), (h[1]-env_.mask_size):(h[1]+env_.mask_size+1)] += 0.5
+    b = b[env_.mask_size:-env_.mask_size, env_.mask_size:-env_.mask_size]
+    ax_anim.clear()
+    image_anim = ax_anim.imshow(b)
 
 next_reset = 2
 for iteration in trange(ITERATIONS):
@@ -47,6 +56,7 @@ for iteration in trange(ITERATIONS):
     with tf.GradientTape(persistent=True) as tape, tf.device("/GPU:0"):
         # PI(a|s)
         probs = agent(state)
+        probs = tf.linalg.normalize(probs + EPSILON, ord=1, axis=-1)[0]
         # a ~ PI(a|s)
         actions = tf.random.categorical(tf.math.log(tf.stop_gradient(probs)), 1, dtype=tf.int32)
         # r ~ p(s,r|s,a)
@@ -114,7 +124,6 @@ for iteration in trange(ITERATIONS):
         h = np.argwhere(b == env_.HEAD)[0]
         b[(h[0]-env_.mask_size):(h[0]+env_.mask_size+1), (h[1]-env_.mask_size):(h[1]+env_.mask_size+1)] += 0.5
         b = b[env_.mask_size:-env_.mask_size, env_.mask_size:-env_.mask_size]
-        ax_anim.clear()
-        ax_anim.imshow(b)
-        plt.show()
-        plt.pause(0.001)
+        ax_anim.set_title((probs[0].numpy() * 1000).astype(int))
+        image_anim.set_data(b)
+        plt.pause(0.0001)

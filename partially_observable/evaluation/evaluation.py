@@ -5,6 +5,20 @@ import environments_masked
 import environments
 import numpy as np
 
+"""
+n = 1
+test_env_f = environments.Walls9x9SnakeEnvironment(n)
+test_env_1 = environments_masked.Walls9x9SnakeEnvironment(n, 1)
+test_env_2 = environments_masked.Walls9x9SnakeEnvironment(n, 2)
+
+print("loading f")
+agent_f, _, _ = load_models_big(test_env_f, "models/Walls9x9SnakeEnvironment/9x9")
+print("loading 1")
+agent_1, _, _ = load_models(test_env_1, "models/Walls9x9SnakeEnvironment/9x9-1")
+print("loading 2")
+agent_2, _, _ = load_models(test_env_2, "models/Walls9x9SnakeEnvironment/9x9-2")
+print("end")
+"""
 n = 1
 test_env_f = environments.OriginalSnakeEnvironment(n, 10)
 test_env_1 = environments_masked.OriginalSnakeEnvironment(n, 10, 1)

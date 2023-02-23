@@ -15,14 +15,15 @@ LOAD_FROM_MEMORY = True
 
 
 def get_env(n=1000):
-    e = OriginalSnakeEnvironment(n, 10)
+    e = Walls9x9SnakeEnvironment(n)
+    e.FRUIT_REWARD = 5.
     return e
 env_ = get_env()
-GAMMA = .9
-ITERATIONS = 12500
-EPSILON = 0.03
-LAMBDA_VALUE = 0.1
-LAMBDA_AGENT = 0.1
+GAMMA = .99
+ITERATIONS = 12500 * 2
+EPSILON = 0.1
+LAMBDA_VALUE = 0.
+LAMBDA_AGENT = 0.
 #  ALPHA = 0.1
 MODELS_PREFIX = f"models/{type(env_).__name__}/{env_.board_size}x{env_.board_size}"
 os.makedirs(MODELS_PREFIX, exist_ok=True)
@@ -45,6 +46,7 @@ for iteration in trange(ITERATIONS):
     with tf.GradientTape(persistent=True) as tape, tf.device("/GPU:0"):
         # PI(a|s)
         probs = agent(state)
+        probs = tf.linalg.normalize(probs + EPSILON, ord=1, axis=-1)[0]
         # a ~ PI(a|s)
         actions = tf.random.categorical(tf.math.log(tf.stop_gradient(probs)), 1, dtype=tf.int32)
         # r ~ p(s,r|s,a)
